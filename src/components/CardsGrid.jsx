@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Card } from './Card'
 
 const cards = [
@@ -21,55 +21,111 @@ const cards = [
 ];
 
 export const CardsGrid = () => {
+    const refCurrentKey = useRef("");
     const [cardList, setCardList] = useState([]);
-    const [activeItems, setActiveItems] = useState([]);
-    const [visibleItems, setVisibleItems] = useState([]);
-    const [finishedItems, setFinishedItems] = useState([]);
+    const [agrouppedCards, setAgrouppedCards] = useState({});
 
-    const formatCardList = () => {
-        let cardsList = [...cards, ...cards, ...cards]
-            .sort(() => Math.random() - 0.5)
-            .map((card) => (
-                {
-                    ...card,
-                    id: crypto.randomUUID(),
-                })
-            );
+    const shuffleCards = () => {
+        const shuffledCards =
+            [...cards, ...cards, ...cards]
+                .sort(() => Math.random() - 0.5)
+                .map((card) => (
+                    {
+                        id: crypto.randomUUID(),
+                        ...card,
+                    }
+                ));
+        setCardList(shuffledCards);
+    }
 
-        setCardList(cardsList);
+    const agroupCards = () => {
+        const agroupped = cardList.reduce((acc, card) => {
+            const key = card.key;
+            const group = acc[key];
+            acc[key] = group ? {
+                ...group,
+                items: [...group.items, { ...card, flipped: false }],
+            } : {
+                finished: false,
+                items: [{ ...card, flipped: false }],
+            }
+            return acc;
+        }, {});
+        setAgrouppedCards(agroupped);
+    }
+
+    const handleFlipShowCard = (card) => {
+        const group = agrouppedCards[card.key];
+        const itemsUpdated = group.items.map((item) => (
+            item.id === card.id ? {
+                ...item,
+                flipped: true,
+            } : item
+        ));
+        const isAllFlipped = itemsUpdated.every(card => card.flipped);
+
+        setAgrouppedCards({
+            ...agrouppedCards,
+            [card.key]: {
+                finished: isAllFlipped,
+                items: itemsUpdated,
+            },
+        });
+        refCurrentKey.current = !isAllFlipped ? card.key : "";
+    }
+
+    const handleFlipHideCards = () => {
+        const newAgrouppedValue = Object.keys(agrouppedCards)
+            .reduce((acc, key) => {
+                const group = agrouppedCards[key];
+                acc[key] = !group.finished ? {
+                    ...group,
+                    items: group.items.map(card => ({ ...card, flipped: false })),
+                } : group;
+                return acc;
+            }, {});
+
+        setTimeout(() => {
+            setAgrouppedCards(newAgrouppedValue);
+            refCurrentKey.current = "";
+        }, 1000);
     }
 
     const handleChoice = (card) => {
-        if (!visibleItems.includes(card.id)) {
-            setActiveItems([...activeItems, card.key]);
-            setVisibleItems([...visibleItems, card.id]);
+        if (
+            !refCurrentKey.current ||
+            refCurrentKey.current === card.key
+        ) {
+            handleFlipShowCard(card);
+        } else {
+            handleFlipHideCards();
         }
     }
 
+    const cardIsFlipped = (card) => {
+        const group = agrouppedCards[card.key];
+        const isFlipped = group.items.find(c => c.id === card.id).flipped;
+        return group.finished || isFlipped;
+    }
+
     useEffect(() => {
-        formatCardList();
+        shuffleCards();
     }, []);
 
     useEffect(() => {
-        if (activeItems.length > 1) {
-            const areEquals = activeItems.every(i => i === activeItems[0]);
-            if (!areEquals) {
-                setVisibleItems([]);
-                setActiveItems([]);
-            }
-        }
-    }, [activeItems]);
+        cardList.length > 0 && agroupCards();
+    }, [cardList]);
 
     return (
-        <section className="card-grid">
-            {cardList.map((card, index) => (
+        <ul className="card-grid">
+            {Object.keys(agrouppedCards).length > 0 && cardList.map((card, index) => (
                 <Card
                     key={index}
                     card={card}
-                    isFlipped={visibleItems.includes(card.id) || finishedItems.includes(card.id)}
+                    isFlipped={cardIsFlipped(card)}
                     handleChoice={handleChoice}
                 />
             ))}
-        </section>
+        </ul>
     )
 }

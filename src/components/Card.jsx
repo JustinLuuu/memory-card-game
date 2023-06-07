@@ -3,11 +3,13 @@ import React, { useState } from 'react'
 export const Card = ({ card, isFlipped, handleChoice }) => {
 
     const handleClickCard = () => {
-        handleChoice(card);
+        if (!isFlipped) {
+            handleChoice(card);
+        }
     }
 
     return (
-        <article
+        <li
             className={`card-grid-item ${isFlipped && "card-grid-item-flipped"}`}
             onClick={handleClickCard}
         >
@@ -28,6 +30,6 @@ export const Card = ({ card, isFlipped, handleChoice }) => {
                     />
                 )
             }
-        </article>
+        </li>
     )
 }
