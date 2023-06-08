@@ -1,0 +1,18 @@
+[
+    {
+        "key": "ball",
+        "src": "src/assets/ball.png"
+    },
+    {
+        "key": "clown",
+        "src": "src/assets/clown.png"
+    },
+    {
+        "key": "sun",
+        "src": "src/assets/sun.png"
+    },
+    {
+        "key": "robot",
+        "src": "src/assets/robot.png"
+    }
+]

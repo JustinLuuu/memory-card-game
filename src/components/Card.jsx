@@ -19,16 +19,21 @@ export const Card = ({ card, isFlipped, handleChoice }) => {
                         src={card.src}
                         width={90}
                         height={90}
-                        alt="front-image-card"
+                        alt={card.key}
                     />
                 ) : (
                     <img
                         src="src\assets\questionMark.png"
                         width={90}
                         height={90}
-                        alt="back-image-card"
+                        alt={card.key}
                     />
                 )
+            }
+
+            {
+                isFlipped &&
+                <span> {card.key} </span>
             }
         </li>
     )

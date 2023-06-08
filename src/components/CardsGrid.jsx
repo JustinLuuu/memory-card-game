@@ -1,29 +1,22 @@
-import React, { useEffect, useState, useRef } from 'react'
-import { Card } from './Card'
+import React, { useEffect, useState, useRef } from 'react';
+import { Card } from './Card';
+import cards from "../mocks/cards.json";
 
-const cards = [
-    {
-        key: "ball",
-        src: "src/assets/ball.png"
-    },
-    {
-        key: "clown",
-        src: "src/assets/clown.png"
-    },
-    {
-        key: "sun",
-        src: "src/assets/sun.png"
-    },
-    {
-        key: "robot",
-        src: "src/assets/robot.png"
-    },
-];
+// import { fetchRandomUsers } from '../helpers/fetchRandomUsers';
 
 export const CardsGrid = () => {
     const refCurrentKey = useRef("");
+    const refClickDisabled = useRef(false);
     const [cardList, setCardList] = useState([]);
     const [agrouppedCards, setAgrouppedCards] = useState({});
+
+    const handleDisableClick = () => {
+        refClickDisabled.current = true;
+    }
+
+    const handleAbleClick = () => {
+        refClickDisabled.current = false;
+    }
 
     const shuffleCards = () => {
         const shuffledCards =
@@ -54,7 +47,7 @@ export const CardsGrid = () => {
         setAgrouppedCards(agroupped);
     }
 
-    const handleFlipShowCard = (card) => {
+    const handleFlipShowCard = (card, isFailed) => {
         const group = agrouppedCards[card.key];
         const itemsUpdated = group.items.map((item) => (
             item.id === card.id ? {
@@ -71,7 +64,10 @@ export const CardsGrid = () => {
                 items: itemsUpdated,
             },
         });
-        refCurrentKey.current = !isAllFlipped ? card.key : "";
+
+        if (!isFailed) {
+            refCurrentKey.current = !isAllFlipped ? card.key : "";
+        }
     }
 
     const handleFlipHideCards = () => {
@@ -85,21 +81,26 @@ export const CardsGrid = () => {
                 return acc;
             }, {});
 
+        handleDisableClick();
         setTimeout(() => {
-            setAgrouppedCards(newAgrouppedValue);
             refCurrentKey.current = "";
+            setAgrouppedCards(newAgrouppedValue);
+            handleAbleClick();
         }, 1000);
     }
 
     const handleChoice = (card) => {
-        if (
-            !refCurrentKey.current ||
-            refCurrentKey.current === card.key
-        ) {
-            handleFlipShowCard(card);
-        } else {
-            handleFlipHideCards();
+        if (refClickDisabled.current) {
+            return;
         }
+
+        const isFailed = (
+            refCurrentKey.current &&
+            refCurrentKey.current !== card.key
+        );
+
+        handleFlipShowCard(card, isFailed);
+        isFailed && handleFlipHideCards();
     }
 
     const cardIsFlipped = (card) => {
