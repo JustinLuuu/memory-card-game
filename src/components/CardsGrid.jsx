@@ -1,10 +1,12 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { Card } from './Card';
-import cards from "../mocks/cards.json";
-
-// import { fetchRandomUsers } from '../helpers/fetchRandomUsers';
+import { fetchRandomUsers } from '../helpers/fetchRandomUsers';
+import GameContext from './context/GameContext';
+// import cardsMock from "../mocks/cards.json";
 
 export const CardsGrid = () => {
+    const { addNumberMoves } = useContext(GameContext);
+
     const refCurrentKey = useRef("");
     const refClickDisabled = useRef(false);
     const [cardList, setCardList] = useState([]);
@@ -18,7 +20,8 @@ export const CardsGrid = () => {
         refClickDisabled.current = false;
     }
 
-    const shuffleCards = () => {
+    const shuffleCards = async () => {
+        const cards = await fetchRandomUsers();
         const shuffledCards =
             [...cards, ...cards, ...cards]
                 .sort(() => Math.random() - 0.5)
@@ -68,6 +71,10 @@ export const CardsGrid = () => {
         if (!isFailed) {
             refCurrentKey.current = !isAllFlipped ? card.key : "";
         }
+
+        if (isAllFlipped) {
+            addNumberMoves();
+        }
     }
 
     const handleFlipHideCards = () => {
@@ -86,6 +93,7 @@ export const CardsGrid = () => {
             refCurrentKey.current = "";
             setAgrouppedCards(newAgrouppedValue);
             handleAbleClick();
+            addNumberMoves();
         }, 1000);
     }
 

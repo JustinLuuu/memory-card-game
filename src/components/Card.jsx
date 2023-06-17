@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 export const Card = ({ card, isFlipped, handleChoice }) => {
 
@@ -17,9 +17,8 @@ export const Card = ({ card, isFlipped, handleChoice }) => {
                 isFlipped ? (
                     <img
                         src={card.src}
-                        width={90}
-                        height={90}
                         alt={card.key}
+                        className="card-grid-item-img"
                     />
                 ) : (
                     <img
@@ -33,7 +32,9 @@ export const Card = ({ card, isFlipped, handleChoice }) => {
 
             {
                 isFlipped &&
-                <span> {card.key} </span>
+                <strong className="card-grid-item-key">
+                    {card.key}
+                </strong>
             }
         </li>
     )
