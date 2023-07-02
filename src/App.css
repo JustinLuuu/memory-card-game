@@ -334,4 +334,12 @@ body {
     .record-section {
       width: 90vw;
     } 
+
+    .card-grid {
+      width: 100vh;
+    }
+
+    .card-grid-item {
+      width: 85%;
+    }
 }
