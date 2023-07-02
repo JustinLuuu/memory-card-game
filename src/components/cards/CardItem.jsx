@@ -1,6 +1,11 @@
 import React from 'react'
 
-export const Card = ({ card, isFlipped, handleChoice }) => {
+export const CardItem = ({
+    card,
+    color,
+    isFlipped,
+    handleChoice
+}) => {
 
     const handleClickCard = () => {
         if (!isFlipped) {
@@ -11,21 +16,22 @@ export const Card = ({ card, isFlipped, handleChoice }) => {
     return (
         <li
             className={`card-grid-item ${isFlipped && "card-grid-item-flipped"}`}
+            style={{ ...(isFlipped && { backgroundColor: color }) }}
             onClick={handleClickCard}
         >
             {
                 isFlipped ? (
                     <img
                         src={card.src}
-                        alt={card.key}
+                        alt="card-front"
                         className="card-grid-item-img"
                     />
                 ) : (
                     <img
-                        src="src\assets\questionMark.png"
+                        src="/questionMark.png"
                         width={90}
                         height={90}
-                        alt={card.key}
+                        alt="card-back"
                     />
                 )
             }

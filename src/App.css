@@ -8,7 +8,7 @@
 body {
   width: 100vw;
   height: 100vh;
-  background-color: rgb(55, 138, 163);
+  background-color: #3A3A3A;
 }
 
 .header-main {
@@ -22,7 +22,7 @@ body {
   flex-direction: column;
   color: white;
   text-align: center;
-  font-size: 45px;
+  font-size: 40px;
 }
 
 .header-main-separator {
@@ -45,7 +45,7 @@ body {
   box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
 }
 
-.header-main-moves { 
+.header-main-moves {
   font-weight: bold;
   font-size: 18px;
   color: white;
@@ -53,30 +53,36 @@ body {
   overflow: hidden;
 }
 
-.header-main-moves-number { 
+.header-main-moves-number {
   color: black;
   background-color: white;
-  border-radius:45%;
+  border-radius: 45%;
   margin-left: 10px;
   font-size: 22px;
-  padding:2px 10px;
+  padding: 2px 10px;
+}
+
+.main {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .card-grid {
   width: 70vw;
   display: grid;
   grid-template-columns: auto auto auto;
-  margin: 10px auto;
+  margin: 10px 0;
 }
 
 .card-grid-item {
   width: 15vw;
-  height: 17vh;
+  height: 18vh;
   margin: 10px 20px;
   border-top-left-radius: 10px;
   border-bottom-right-radius: 10px;
   border: 2px solid transparent;
-  background-color: white;
+  background-color: #C4C4C4;
   justify-self: center;
   display: flex;
   flex-direction: column;
@@ -87,7 +93,7 @@ body {
 }
 
 .card-grid-item-img {
-  width: 65%;
+  width: 75%;
   height: 100px;
   object-fit: contain;
 }
@@ -123,8 +129,209 @@ body {
   margin-top: 2px;
 }
 
-.footer { 
+.record-section {
+  width: 50vw;
+  background-color: white;
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 10px;
+  padding-bottom: 40px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.record-section-title {
+  font-weight: bold;
+  font-size: 28px;
+  color: #014296;
+}
+
+.record-section-sub {
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.795);
+  margin: 6px 0;
+}
+
+.record-section-summary {
+  font-weight: bold;
+  color: #014296;
+}
+
+.record-section-summary-count {
+  font-size: 35px;
+  margin-left: 20px;
+  padding-right: 5px;
+}
+
+.record-board {
+  margin-top: 20px;
+  width: 70%;
+}
+
+.record-board li:nth-child(even) {
+  background-color: #F0F0F0;
+}
+
+.record-board li:nth-child(odd) {
+  background-color: #C4C4C4;
+}
+
+.record-board-item {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.record-board-item:hover {
+  background-color: #C4C4C4 !important;
+}
+
+.record-board-item-player {
+  font-size: 17px;
+  text-align: left !important;
+}
+
+.record-board-item-score {
+  background-color: black;
+  color: white;
+  font-weight: bolder;
+  border-radius: 50px;
+  padding: 5px 10px;
+  text-align: left !important;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+}
+
+.form label {
+  display: block;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333232;
+  margin-bottom: 10px;
+}
+
+.form input {
+  height: 35px;
+  min-width: 300px;
+  max-width: 300px;
+  font-size: 20px;
+  padding: 0px 15px;
+}
+
+.form button {
+  cursor: pointer;
+  height: 40px;
+  color: white;
+  font-weight: bolder;
+  font-size: 20px;
+  background-color: #A5A5A5;
+  border: none;
+  border-radius: 20px;
+  margin-top: 15px;
+}
+
+.form button:active {
+  border: 2px solid  #014296;
+}
+
+.footer {
   display: flex;
   justify-content: center;
   font-weight: 600;
+}
+
+.loader-container { 
+  margin-top: 8vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+}
+
+.loader-container * {
+  overflow: hidden;
+}
+
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border: 8px solid #fff;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #fff transparent transparent transparent;
+}
+
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes inAnimation {
+  0% {
+    transform: scale(0.1);
+    opacity: 0;
+  }
+
+  60% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes outAnimation {
+  20% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+/* MEDIA */
+
+@media screen and (max-width: 1190px) {
+    .record-section {
+      width: 90vw;
+    } 
 }

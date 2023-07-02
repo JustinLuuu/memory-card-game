@@ -1,24 +1,18 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
-import { Card } from './Card';
-import { fetchRandomUsers } from '../helpers/fetchRandomUsers';
-import GameContext from './context/GameContext';
-// import cardsMock from "../mocks/cards.json";
+import { CardItem } from './CardItem';
+import { fetchRandomUsers } from '../../helpers/fetchRandomUsers';
+import GameContext from '../context/GameContext';
+import { useAbleClick } from '../../hooks/useAbleClick';
+// import cardsMock from "../../mocks/cards.json";
+import { Loader } from '../Loader';
 
-export const CardsGrid = () => {
-    const { addNumberMoves } = useContext(GameContext);
-
+export const CardsGrid = ({ styleProps }) => {
+    const { addNumberMoves, addNumberErrors, declareWinner } = useContext(GameContext);
     const refCurrentKey = useRef("");
-    const refClickDisabled = useRef(false);
     const [cardList, setCardList] = useState([]);
     const [agrouppedCards, setAgrouppedCards] = useState({});
-
-    const handleDisableClick = () => {
-        refClickDisabled.current = true;
-    }
-
-    const handleAbleClick = () => {
-        refClickDisabled.current = false;
-    }
+    const [refClickDisabled, handleDisableClick, handleAbleClick] = useAbleClick();
+    const isCardsAgroupped = (Object.keys(agrouppedCards).length > 0);
 
     const shuffleCards = async () => {
         const cards = await fetchRandomUsers();
@@ -35,6 +29,9 @@ export const CardsGrid = () => {
     }
 
     const agroupCards = () => {
+        const colors = ["#F8A1A4", "#FFCCA9", "#98E0AD", "#94D8F6"];
+        let indexColor = 0;
+
         const agroupped = cardList.reduce((acc, card) => {
             const key = card.key;
             const group = acc[key];
@@ -43,6 +40,7 @@ export const CardsGrid = () => {
                 items: [...group.items, { ...card, flipped: false }],
             } : {
                 finished: false,
+                color: colors[indexColor++],
                 items: [{ ...card, flipped: false }],
             }
             return acc;
@@ -63,6 +61,7 @@ export const CardsGrid = () => {
         setAgrouppedCards({
             ...agrouppedCards,
             [card.key]: {
+                ...agrouppedCards[card.key],
                 finished: isAllFlipped,
                 items: itemsUpdated,
             },
@@ -94,6 +93,7 @@ export const CardsGrid = () => {
             setAgrouppedCards(newAgrouppedValue);
             handleAbleClick();
             addNumberMoves();
+            addNumberErrors();
         }, 1000);
     }
 
@@ -111,7 +111,18 @@ export const CardsGrid = () => {
         isFailed && handleFlipHideCards();
     }
 
-    const cardIsFlipped = (card) => {
+    const handleCheckWin = () => {
+        const allGroupFinished = Object.keys(agrouppedCards)
+            .every((key) => agrouppedCards[key].finished);
+        allGroupFinished && declareWinner();
+    }
+
+    const returnColor = (card) => {
+        const group = agrouppedCards[card.key];
+        return group.color;
+    }
+
+    const returnIsFlipped = (card) => {
         const group = agrouppedCards[card.key];
         const isFlipped = group.items.find(c => c.id === card.id).flipped;
         return group.finished || isFlipped;
@@ -125,16 +136,30 @@ export const CardsGrid = () => {
         cardList.length > 0 && agroupCards();
     }, [cardList]);
 
+    useEffect(() => {
+        isCardsAgroupped && handleCheckWin();
+    }, [agrouppedCards]);
+
     return (
-        <ul className="card-grid">
-            {Object.keys(agrouppedCards).length > 0 && cardList.map((card, index) => (
-                <Card
-                    key={index}
-                    card={card}
-                    isFlipped={cardIsFlipped(card)}
-                    handleChoice={handleChoice}
-                />
-            ))}
-        </ul>
+        isCardsAgroupped ? (
+            <ul
+                className="card-grid"
+                style={styleProps}
+            >
+                {
+                    isCardsAgroupped && cardList.map((card) => (
+                        <CardItem
+                            key={card.id}
+                            card={card}
+                            color={returnColor(card)}
+                            isFlipped={returnIsFlipped(card)}
+                            handleChoice={handleChoice}
+                        />
+                    ))
+                }
+            </ul>
+        ) : (
+            <Loader />
+        )
     )
 }
